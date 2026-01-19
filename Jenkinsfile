@@ -49,7 +49,6 @@ pipeline {
                 sh "cp target/*.war ${WAR_FILE}"
             }
         }
-
         stage("Deploy to Dev") {
             when {
                 expression { params.BRANCH_NAME == 'file/dev' }
