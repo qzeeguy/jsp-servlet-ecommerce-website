@@ -1,10 +1,10 @@
 pipeline {
-    agent {
-         docker{
-             image 'maven:3.8.6-openjdk-11'
-             arg    '-v /root/.m2:/root/.m2'
-         }
-    }
+    agent { label: 'master'}
+         //docker{
+            // image 'maven:3.8.6-openjdk-11'
+            // arg    '-v /root/.m2:/root/.m2'
+        // }
+   // }
     parameters {
         string(name: "BRANCH_NAME", defaultValue: "file/dev", description: "Specify the branch name to deploy")
     }
