@@ -5,7 +5,10 @@ import com.ecommerce.entity.Account;
 import com.ecommerce.entity.CartProduct;
 import com.ecommerce.entity.Order;
 import com.ecommerce.entity.Product;
+<<<<<<< HEAD
 //import com.oracle.wls.shaded.org.apache.xpath.operations.Or;
+=======
+>>>>>>> 9d6d7b4f357ae1701219b3eb8ac8b563384f75b4
 
 import java.sql.*;
 import java.util.ArrayList;
