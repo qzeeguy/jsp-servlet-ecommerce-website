@@ -50,6 +50,7 @@ pipeline {
             }
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
          post {
@@ -59,6 +60,8 @@ pipeline {
         }
     }
 >>>>>>> file/dev
+=======
+>>>>>>> file/qa
         stage("Deploy to Dev") {
             when {
                 expression { params.BRANCH_NAME == 'file/dev' }
