@@ -1,17 +1,8 @@
 pipeline {
-    agent {
-        docker {
-            image 'my-docker-agent:latest'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
+    agent any
 
     parameters {
-        string(
-            name: "BRANCH_NAME",
-            defaultValue: "file/dev",
-            description: "Specify the branch name to deploy"
-        )
+        string(name: "BRANCH_NAME", defaultValue: "file/dev", description: "Specify the branch name to deploy")
     }
 
     environment {
@@ -48,12 +39,13 @@ pipeline {
                 sh "mvn clean package"
                 sh "cp target/*.war ${WAR_FILE}"
             }
-            post { success { archiveArtifacts artifacts: '**/target/*.war', fingerprint: true } }
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/target/*.war', fingerprint: true
+                }
+            }
         }
 
-        
-    }
-        
         stage("Deploy to Dev") {
             when {
                 expression { params.BRANCH_NAME == 'file/dev' }
@@ -89,25 +81,12 @@ pipeline {
     post {
         success {
             echo "Pipeline completed successfully!"
-            slackSend(
-                channel: '#cicd_monitoring',
-                message: "✅ *SUCCESS* | Job: `${env.JOB_NAME}` | Build: #${env.BUILD_NUMBER} | Branch: `${params.BRANCH_NAME}`"
-            )
         }
-
         failure {
             echo "Pipeline failed. Check logs."
-            slackSend(
-                channel: '#cicd_monitoring',
-                message: "❌ *FAILED* | Job: `${env.JOB_NAME}` | Build: #${env.BUILD_NUMBER} | Branch: `${params.BRANCH_NAME}`"
-            )
         }
-
         aborted {
-            slackSend(
-                channel: '#cicd_monitoring',
-                message: "⚠️ *ABORTED* | Job: `${env.JOB_NAME}` | Build: #${env.BUILD_NUMBER} | Branch: `${params.BRANCH_NAME}`"
-            )
+            echo "Pipeline aborted."
         }
     }
-
+}
