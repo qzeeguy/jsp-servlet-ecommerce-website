@@ -20,7 +20,7 @@ pipeline {
                 script {
                     checkout([$class: 'GitSCM',
                         branches: [[name: params.BRANCH_NAME]],
-                        userRemoteConfigs: [[url: 'https://github.com/RAJAN9/boxfuse-sample-java-war-hello.git'
+                        userRemoteConfigs: [[url: 'https://github.com/qzeeguy/jsp-servlet-ecommerce-website.git'
                         credentialsId: 'github-cred'
                         
                         ]]]
