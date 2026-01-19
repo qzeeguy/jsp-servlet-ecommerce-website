@@ -49,19 +49,13 @@ pipeline {
                 sh "cp target/*.war ${WAR_FILE}"
             }
         }
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
          post {
         success {
             // archive the WAR so it's available outside Docker
             archiveArtifacts artifacts: 'target/*.war', fingerprint: true
         }
     }
->>>>>>> file/dev
-=======
->>>>>>> file/qa
+        
         stage("Deploy to Dev") {
             when {
                 expression { params.BRANCH_NAME == 'file/dev' }
