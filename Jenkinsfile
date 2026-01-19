@@ -36,12 +36,10 @@ pipeline {
                 sh "mvn clean package"
                 sh "cp target/*.war ${WAR_FILE}"
             }
+            post { success { archiveArtifacts artifacts: '**/target/*.war', fingerprint: true } }
         }
-         post {
-        success {
-            // archive the WAR so it's available outside Docker
-            archiveArtifacts artifacts: 'target/*.war', fingerprint: true
-        }
+
+        
     }
         stage("Deploy to Dev") {
             when { expression { params.BRANCH_NAME == 'file/dev' } }
