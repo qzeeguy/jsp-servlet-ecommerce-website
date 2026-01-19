@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+         agent { 
+             docker { 
+                 image 'my-docker-agent:latest ' 
+                  args '-v /root/.m2:/root/.m2' 
+             } 
+         }
 
     parameters {
         string(name: "BRANCH_NAME", defaultValue: "file/dev", description: "Specify the branch name to deploy")
