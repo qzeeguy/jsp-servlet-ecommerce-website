@@ -21,7 +21,7 @@ pipeline {
                     checkout([$class: 'GitSCM',
                         branches: [[name: params.BRANCH_NAME]],
                         userRemoteConfigs: [[url: 'https://github.com/RAJAN9/boxfuse-sample-java-war-hello.git'
-                        credentialsId: 'github-pat'
+                        credentialsId: 'github-pit'
                         
                         ]]]
                     )
