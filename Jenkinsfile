@@ -22,7 +22,7 @@ pipeline {
                     checkout([$class: 'GitSCM',
                         branches: [[name: params.BRANCH_NAME]],
                         userRemoteConfigs: [[url: 'https://github.com/qzeeguy/jsp-servlet-ecommerce-website.git'
-                        credentialsId: 'github-cred'
+                        credentialsId: 'sirvlet-cred'
                         
                         ]]]
                     )
