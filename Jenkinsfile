@@ -59,9 +59,11 @@ pipeline {
             steps {
                 echo "Deploying to Dev environment..."
                 sshagent(credentialsId: ['jenkins-deploy-key']) {
-                    sh '''
-                        scp ${WAR_FILE} ${DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/
-                    '''
+                    sh """
+                        set -x
+
+                        scp ${env.WAR_FILE} ${env.DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/
+                    """
                 }
             }
         }
