@@ -1,81 +1,92 @@
 pipeline {
-    agent { label: 'master'}  // run directly on master node
-        
+    agent { label 'master' }
+
     parameters {
-        string(name: "BRANCH_NAME", defaultValue: "file/dev", description: "Specify the branch name to deploy")
+        string(
+            name: "BRANCH_NAME",
+            defaultValue: "file/dev",
+            description: "Specify the branch name to deploy"
+        )
     }
+
     environment {
-        DEV_HOST = "ubuntu@<DEV_EC2_IP>"
-        QA_HOST = "ubuntu@<QA_EC2_IP>"
+        DEV_HOST  = "ubuntu@<DEV_EC2_IP>"
+        QA_HOST   = "ubuntu@<QA_EC2_IP>"
         PROD_HOST = "ubuntu@<PROD_EC2_IP>"
-        WAR_FILE = "target/jsp-servlet-ecommerce-website.war"
-        SSH-KEY = ""
+        WAR_FILE  = "target/jsp-servlet-ecommerce-website.war"
+        SSH_KEY   = ""
     }
+
     stages {
-        stage("Git checkout") {
+
+        stage("Git Checkout") {
             steps {
-                script {
-                    checkout([$class: 'GitSCM',
-                        branches: [[name: params.BRANCH_NAME]],
-                        userRemoteConfigs: [[url: 'https://github.com/qzeeguy/jsp-servlet-ecommerce-website.git'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: params.BRANCH_NAME]],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/qzeeguy/jsp-servlet-ecommerce-website.git',
                         credentialsId: 'sirvlet-cred'
-                        
-                        ]]]
-                    )
+                    ]]
+                ])
+            }
+        }
+
+        stage("Testing") {
+            steps {
+                echo "Test runs"
+            }
+        }
+
+        stage("Build") {
+            steps {
+                sh '''
+                    mvn clean package
+                    ls -l target
+                '''
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'target/*.war', fingerprint: true
                 }
             }
         }
-        stage("Testing") {
-            steps { echo "Test runs" }
-        }
-        stage("Build") {
-            steps {
-                sh """
-                   mvn clean package
-                    ls -l target
-                """
-            }
-            post { success { archiveArtifacts artifacts: 'target/*.war', fingerprint: true } }
-        }
 
-        
-    }
         stage("Deploy to Dev") {
-            when { expression { params.BRANCH_NAME == 'file/dev' } }
+            when {
+                expression { params.BRANCH_NAME == 'file/dev' }
+            }
             steps {
                 echo "Deploying to Dev environment..."
-                script {
-                    sshagent(credentialsId: ['jenkins-deploy-key'])
-
-                        sh """      
-                        
-                           "scp ${WAR_FILE} ${DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/"
-               
-                           """  
-             }
-           
+                sshagent(credentialsId: ['jenkins-deploy-key']) {
+                    sh '''
+                        scp ${WAR_FILE} ${DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/
+                    '''
+                }
             }
-
-
         }
 
         stage("Deploy to QA") {
-            when { expression { params.BRANCH_NAME == 'file/qa' } }
+            when {
+                expression { params.BRANCH_NAME == 'file/qa' }
+            }
             steps {
                 echo "Deploying to QA environment..."
-                // sh "scp ${WAR_FILE} ${QA_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/"
             }
         }
+
         stage("Deploy to Prod") {
-            when { expression { params.BRANCH_NAME == 'file/prod' } }
+            when {
+                expression { params.BRANCH_NAME == 'file/prod' }
+            }
             steps {
                 input message: "Deploy to Production?", ok: "Deploy"
                 echo "Deploying to Production environment..."
-                // sh "scp ${WAR_FILE} ${PROD_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/"
             }
         }
     }
-     post {
+
+    post {
         success {
             echo "Pipeline completed successfully!"
             slackSend(
@@ -98,5 +109,3 @@ pipeline {
         }
     }
 }
-
-
