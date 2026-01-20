@@ -44,8 +44,19 @@ pipeline {
             when { expression { params.BRANCH_NAME == 'file/dev' } }
             steps {
                 echo "Deploying to Dev environment..."
-                sh "scp -i ${SSH-KEY}${WAR_FILE} ${DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/"
+                script {
+                    sshagent(credentialsId: ['jenkins-deploy-key'])
+
+                        sh """      
+                        
+                           "scp ${WAR_FILE} ${DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/"
+               
+                           """  
+             }
+           
             }
+
+
         }
 
         stage("Deploy to QA") {
