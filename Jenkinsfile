@@ -13,6 +13,7 @@ pipeline {
         QA_HOST = "ubuntu@<QA_EC2_IP>"
         PROD_HOST = "ubuntu@<PROD_EC2_IP>"
         WAR_FILE = "target/jsp-servlet-ecommerce-website.war"
+        SSH-KEY = ""
     }
     stages {
         stage("Git checkout") {
@@ -33,10 +34,12 @@ pipeline {
         }
         stage("Build") {
             steps {
-                sh "mvn clean package"
-                sh "cp target/*.war ${WAR_FILE}"
+                sh """
+                   mvn clean package
+                    ls -l target
+                """
             }
-            post { success { archiveArtifacts artifacts: '**/target/*.war', fingerprint: true } }
+            post { success { archiveArtifacts artifacts: 'target/*.war', fingerprint: true } }
         }
 
         
@@ -45,9 +48,10 @@ pipeline {
             when { expression { params.BRANCH_NAME == 'file/dev' } }
             steps {
                 echo "Deploying to Dev environment..."
-                // sh "scp ${WAR_FILE} ${DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/"
+                sh "scp -i ${SSH-KEY}${WAR_FILE} ${DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/"
             }
         }
+
         stage("Deploy to QA") {
             when { expression { params.BRANCH_NAME == 'file/qa' } }
             steps {
