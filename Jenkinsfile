@@ -64,7 +64,7 @@ pipeline {
 
                         ssh ${DEV_HOST} 'rm -rf /home/ubuntu/apache-tomcat-9.0.113/webapps/test-1.0-SNAPSHOT*'
 
-                        scp ${env.WAR_FILE} ${env.DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/
+                        scp ${env.WAR_FILE} ${DEV_HOST}:/home/ubuntu/apache-tomcat-9.0.113/webapps/
 
                         # Optionally restart Tomcat to ensure deployment
                         ssh ${DEV_HOST} '/home/ubuntu/apache-tomcat-9.0.113/bin/shutdown.sh || true'
